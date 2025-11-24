@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # World Engine IDE
 
 A comprehensive, fully connected development environment that integrates mathematics, graphics, prefab pipelines, AI intelligence, metadata management, and web development into a cohesive, scalable system.
@@ -264,8 +263,6 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 ---
 
 **World Engine IDE** - Building the future of integrated development environments. 
-=======
 # world-ide-engine
 world engine ide graphic and game etc. environment 
 i also need copilet instructions for best development for the world engine ide 
->>>>>>> origin/main
