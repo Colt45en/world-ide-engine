@@ -1,36 +1,24 @@
 #!/usr/bin/env python3
 """
-Fresh World Engine - Main Entry Point
+World Engine - Main API Server Entry Point
 """
 
-import pygame
-import sys
-from engine.core import Engine
+import os
+import uvicorn
+from api.service import create_app
 
 def main():
-    """Main function to start the engine."""
-    pygame.init()
+    """Start the World Engine API server."""
+    app = create_app()
+    
+    # Allow configuration of port via environment variable PORT
+    port = int(os.environ.get("PORT", "8001"))
+    print(f"Starting World Engine API Server on port {port}...")
+    print(f"Access the Studio Interface at: http://localhost:{port}/web/studio.html")
+    print(f"Access the Engine Only at: http://localhost:{port}/web/worldengine.html")
+    print(f"API Documentation at: http://localhost:{port}/docs")
 
-    # Initialize the engine
-    engine = Engine()
-
-    # Main game loop
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        # Update engine
-        engine.update()
-
-        # Render
-        engine.render()
-
-        pygame.display.flip()
-
-    pygame.quit()
-    sys.exit()
+    uvicorn.run(app, host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     main()

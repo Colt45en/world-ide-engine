@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12, 3.13]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage
+          python -m spacy download en_core_web_sm
+
+      - name: Run tests with coverage
+        run: |
+          coverage run -m unittest discover -v tests
+          coverage xml -o coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+
+      - name: Check coverage threshold
+        env:
+          COVERAGE_THRESHOLD: 75
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET, sys, os
+          path = 'coverage.xml'
+          if not os.path.exists(path):
+              print('coverage.xml not found')
+              sys.exit(1)
+          tree = ET.parse(path)
+          root = tree.getroot()
+          lines_valid = int(root.get('lines-valid') or root.get('lines') or 0)
+          lines_covered = int(root.get('lines-covered') or root.get('covered') or 0)
+          if lines_valid == 0:
+              print('No coverage lines found in coverage.xml')
+              sys.exit(1)
+          pct = lines_covered / lines_valid * 100
+          print(f'Total coverage: {pct:.2f}%')
+          threshold = int(os.environ.get('COVERAGE_THRESHOLD', '75'))
+          if pct < threshold:
+              print(f'Error: coverage {pct:.2f}% < required {threshold}%')
+              sys.exit(1)
+          print('Coverage threshold passed')
+          PY

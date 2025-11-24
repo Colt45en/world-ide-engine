@@ -1,0 +1,77 @@
+{
+  "seeds": {
+    "terrible": -0.8,
+    "awful": -0.75,
+    "bad": -0.6,
+    "poor": -0.5,
+    "negative": -0.4,
+    "unfortunate": -0.45,
+    "neutral": 0.0,
+    "average": 0.0,
+    "okay": 0.0,
+    "good": 0.6,
+    "great": 0.7,
+    "excellent": 0.8,
+    "wonderful": 0.85,
+    "fantastic": 0.9,
+    "positive": 0.4,
+    "fortunate": 0.45
+  },
+  "constraints": [
+    [
+      "terrible",
+      "<",
+      "awful"
+    ],
+    [
+      "awful",
+      "<",
+      "bad"
+    ],
+    [
+      "bad",
+      "<",
+      "poor"
+    ],
+    [
+      "poor",
+      "<",
+      "negative"
+    ],
+    [
+      "negative",
+      "<",
+      "neutral"
+    ],
+    [
+      "neutral",
+      "<",
+      "positive"
+    ],
+    [
+      "positive",
+      "<",
+      "good"
+    ],
+    [
+      "good",
+      "<",
+      "great"
+    ],
+    [
+      "great",
+      "<",
+      "excellent"
+    ],
+    [
+      "excellent",
+      "<",
+      "wonderful"
+    ],
+    [
+      "wonderful",
+      "<",
+      "fantastic"
+    ]
+  ]
+}

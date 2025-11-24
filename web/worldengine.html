@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Engine - Lexicon Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #4ec9b0;
+        }
+
+        .input-section {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1177bb;
+        }
+
+        .results {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .sentiment-score {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .sentiment-positive {
+            background: #1e4620;
+            color: #4ec9b0;
+        }
+
+        .sentiment-negative {
+            background: #5a1d1d;
+            color: #f48771;
+        }
+
+        .sentiment-neutral {
+            background: #3e3e42;
+            color: #d4d4d4;
+        }
+
+        .section {
+            margin: 20px 0;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            color: #4ec9b0;
+            margin-bottom: 10px;
+        }
+
+        .token {
+            display: inline-block;
+            background: #1e1e1e;
+            padding: 6px 12px;
+            margin: 3px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 World Engine - Lexicon Analysis</h1>
+            <p>Semantic analysis powered by hand-labeled seeds and constraint-based scaling</p>
+        </header>
+
+        <div class="input-section">
+            <textarea id="input-text"
+                placeholder="Enter text to analyze...">This is an excellent product with wonderful features!</textarea>
+            <button onclick="analyzeText()">Analyze Text</button>
+            <button onclick="showSeeds()">Show Seeds</button>
+            <div style="margin-top: 12px; display:flex; gap:8px; align-items:center;">
+                <input id="new-seed-word" placeholder="seed word"
+                    style="padding:6px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;" />
+                <input id="new-seed-value" placeholder="value (-1.0..1.0)"
+                    style="padding:6px; width:120px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;" />
+                <button onclick="addSeed()">Add Seed</button>
+                <button onclick="showConstraints()">Show Constraints</button>
+            </div>
+        </div>
+
+        <div id="results" class="results hidden"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        async function analyzeText() {
+            const text = document.getElementById('input-text').value.trim();
+            if (!text) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                displayError(error.message);
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+
+            const score = data.sentiment_score || 0;
+            let sentimentClass = 'sentiment-neutral';
+            if (score > 0.1) sentimentClass = 'sentiment-positive';
+            if (score < -0.1) sentimentClass = 'sentiment-negative';
+
+            resultsDiv.innerHTML = `
+                <div class="sentiment-score ${sentimentClass}">
+                    ${score > 0 ? '+' : ''}${score.toFixed(3)}
+                </div>
+                
+                <div class="section">
+                    <h2>Keywords (${data.keywords.length})</h2>
+                    ${data.keywords.map(k => `<span class="token">${k}</span>`).join('')}
+                </div>
+                
+                <div class="section">
+                    <h2>Named Entities (${data.entities.length})</h2>
+                    ${data.entities.length ? data.entities.map(e =>
+                `<span class="token">${e.text} <em>(${e.label})</em></span>`
+            ).join('') : '<p>No entities found</p>'}
+                </div>
+                
+                <div class="section">
+                    <h2>Linguistic Tokens (${data.tokens.length})</h2>
+                    ${data.tokens.map(t =>
+                `<span class="token" title="POS: ${t.pos}, DEP: ${t.dep}">${t.text}</span>`
+            ).join('')}
+                </div>
+                
+                <div class="section">
+                    <h2>Sentences (${data.sentences.length})</h2>
+                    ${data.sentences.map(s => `<p style="margin: 8px 0;">${s}</p>`).join('')}
+                </div>
+            `;
+        }
+
+        async function showSeeds() {
+            try {
+                const response = await fetch(`${API_BASE}/seeds`);
+                const data = await response.json();
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.classList.remove('hidden');
+
+                const sortedSeeds = Object.entries(data.seeds)
+                    .sort((a, b) => a[1] - b[1]);
+
+                resultsDiv.innerHTML = `
+                    <div class="section">
+                        <h2>Semantic Seeds (${sortedSeeds.length})</h2>
+                        <p style="margin-bottom: 15px;">Hand-labeled words with semantic values</p>
+                        ${sortedSeeds.map(([word, value]) => {
+                    let className = 'sentiment-neutral';
+                    if (value > 0.1) className = 'sentiment-positive';
+                    if (value < -0.1) className = 'sentiment-negative';
+                    return `
+                            <div style="display:flex; gap:8px; align-items:center; margin:4px 0;">
+                                <div class="token ${className}" style="min-width:160px">${word}: ${value > 0 ? '+' : ''}${value.toFixed(2)}</div>
+                                <input id="edit-${word}" type="number" step="0.01" min="-1" max="1" value="${value}" style="padding:6px; width:120px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;" />
+                                <button onclick="updateSeed('${word}', document.getElementById('edit-${word}').value)">Save</button>
+                                <button onclick="deleteSeed('${word}')" style="background:#a33;">Delete</button>
+                            </div>
+                        `;
+                }).join('')}
+                    </div>
+                `;
+
+            } catch (error) {
+                displayError(error.message);
+            }
+        }
+
+        async function addSeed() {
+            const word = document.getElementById('new-seed-word').value.trim();
+            const value = parseFloat(document.getElementById('new-seed-value').value);
+            if (!word || isNaN(value)) return alert('Provide word and numeric value');
+
+            try {
+                const r = await fetch(`${API_BASE}/seeds`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word, value }) });
+                if (!r.ok) throw new Error('Failed to add seed');
+                showSeeds();
+            } catch (e) {
+                displayError(e.message);
+            }
+        }
+
+        async function updateSeed(word, value) {
+            const parsed = parseFloat(value);
+            if (isNaN(parsed)) return alert('Invalid value (must be numeric)');
+
+            try {
+                const r = await fetch(`${API_BASE}/seeds/${word}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word, value: parsed }) });
+                if (!r.ok) throw new Error('Failed to update seed');
+                showSeeds();
+            } catch (e) {
+                displayError(e.message);
+            }
+        }
+
+        async function deleteSeed(word) {
+            if (!confirm(`Delete seed "${word}"?`)) return;
+            try {
+                const r = await fetch(`${API_BASE}/seeds/${word}`, { method: 'DELETE' });
+                if (!r.ok) throw new Error('Failed to delete');
+                showSeeds();
+            } catch (e) {
+                displayError(e.message);
+            }
+        }
+
+        async function showConstraints() {
+            try {
+                const response = await fetch(`${API_BASE}/constraints`);
+                const data = await response.json();
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.classList.remove('hidden');
+
+                resultsDiv.innerHTML = `
+                    <div class="section">
+                        <h2>Constraints (${data.constraints.length})</h2>
+                        ${data.constraints.length ? data.constraints.map(c => `
+                            <div style="display:flex; gap:8px; align-items:center; margin:4px 0;">
+                                <div class="token">${c[0]} ${c[1]} ${c[2]}</div>
+                                <button onclick="removeConstraint('${c[0]}','${c[1]}','${c[2]}')" style="background:#a33;">Delete</button>
+                            </div>
+                        `).join('') : '<p>No constraints yet</p>'}
+
+                        <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+                            <input id="c-word1" placeholder="word1" style="padding:6px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;" />
+                            <select id="c-op" style="padding:6px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;">
+                                <option value="<"><</option>
+                                <option value=">">></option>
+                                <option value="=">=</option>
+                            </select>
+                            <input id="c-word2" placeholder="word2" style="padding:6px; border-radius:4px; border:1px solid #3e3e42; background:#1e1e1e; color:#d4d4d4;" />
+                            <button onclick="addConstraint()">Add Constraint</button>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                displayError(error.message);
+            }
+        }
+
+        async function addConstraint() {
+            const w1 = document.getElementById('c-word1').value.trim();
+            const op = document.getElementById('c-op').value;
+            const w2 = document.getElementById('c-word2').value.trim();
+            if (!w1 || !w2) return alert('word1 and word2 required');
+
+            try {
+                const r = await fetch(`${API_BASE}/constraints`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word1: w1, operator: op, word2: w2 }) });
+                if (!r.ok) throw new Error('Failed to add constraint');
+                showConstraints();
+            } catch (e) {
+                displayError(e.message);
+            }
+        }
+
+        async function removeConstraint(w1, op, w2) {
+            if (!confirm(`Delete constraint ${w1} ${op} ${w2}?`)) return;
+            try {
+                const r = await fetch(`${API_BASE}/constraints`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word1: w1, operator: op, word2: w2 }) });
+                if (!r.ok) throw new Error('Failed');
+                showConstraints();
+            } catch (e) {
+                displayError(e.message);
+            }
+        }
+
+        function displayError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.innerHTML = `
+                <div class="section">
+                    <h2 style="color: #f48771;">Error</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Allow Enter to submit (with Shift+Enter for newlines)
+        document.getElementById('input-text').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                analyzeText();
+            }
+        });
+    </script>
+</body>
+
+</html>
