@@ -126,7 +126,7 @@ class PrefabPipeline {
     
     // Create instance with overrides
     const instance = {
-      id: `instance_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `instance_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       prefabId,
       components: this.deepMerge(prefab.components, overrides),
       createdAt: Date.now()
