@@ -1,12 +1,12 @@
 import math
 from dataclasses import dataclass
-from typing import List, Tuple
+
 
 @dataclass
 class SupportPoint:
-    p: Tuple[float, float, float]
-    a: Tuple[float, float, float]
-    b: Tuple[float, float, float]
+    p: tuple[float, float, float]
+    a: tuple[float, float, float]
+    b: tuple[float, float, float]
 
 def vec_sub(a, b):
     return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
@@ -34,7 +34,7 @@ def vec_neg(v):
     return (-v[0], -v[1], -v[2])
 
 class Collider:
-    def getSupport(self, direction: Tuple[float, float, float]) -> Tuple[float, float, float]:
+    def getSupport(self, direction: tuple[float, float, float]) -> tuple[float, float, float]:
         raise NotImplementedError
 
 class BoxCollider(Collider):
@@ -64,18 +64,18 @@ class GJK:
     EPSILON = 1e-6
 
     def __init__(self):
-        self.simplex: List[SupportPoint] = []
+        self.simplex: list[SupportPoint] = []
 
-    def _getSupportPoint(self, collider_a: Collider, collider_b: Collider, direction: Tuple) -> SupportPoint:
+    def _getSupportPoint(self, collider_a: Collider, collider_b: Collider, direction: tuple) -> SupportPoint:
         point_a = collider_a.getSupport(direction)
         point_b = collider_b.getSupport(vec_neg(direction))
         world_point = vec_sub(point_a, point_b)
         return SupportPoint(p=world_point, a=point_a, b=point_b)
 
-    def _sameDirection(self, a: Tuple, b: Tuple) -> bool:
+    def _sameDirection(self, a: tuple, b: tuple) -> bool:
         return vec_dot(a, b) > 0
 
-    def _perpendicular(self, a: Tuple, b: Tuple) -> Tuple:
+    def _perpendicular(self, a: tuple, b: tuple) -> tuple:
         ac = vec_cross(a, b)
         return vec_cross(ac, a)
 
@@ -153,5 +153,10 @@ class GJK:
                 return True
         return False
 
-    def getSimplex(self) -> List[SupportPoint]:
+    def getSimplex(self) -> list[SupportPoint]:
         return self.simplex
+
+
+
+
+

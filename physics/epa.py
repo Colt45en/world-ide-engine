@@ -1,14 +1,14 @@
 import math
 from dataclasses import dataclass
-from typing import List, Tuple, Optional
+
 from physics.gjk import SupportPoint, vec_sub, vec_add, vec_scale, vec_dot, vec_cross, vec_len, vec_norm
 
 @dataclass
 class ContactInfo:
-    normal: Tuple[float, float, float]
+    normal: tuple[float, float, float]
     depth: float
-    world_point_a: Tuple[float, float, float]
-    world_point_b: Tuple[float, float, float]
+    world_point_a: tuple[float, float, float]
+    world_point_b: tuple[float, float, float]
     contact_count: int
 
 @dataclass
@@ -16,18 +16,18 @@ class EPAFace:
     a: int
     b: int
     c: int
-    normal: Tuple[float, float, float]
+    normal: tuple[float, float, float]
 
 class EPA:
     MAX_ITERATIONS = 50
     EPSILON = 1e-6
 
     def __init__(self):
-        self.vertices: List[SupportPoint] = []
-        self.faces: List[EPAFace] = []
-        self.edges: List[tuple] = []
+        self.vertices: list[SupportPoint] = []
+        self.faces: list[EPAFace] = []
+        self.edges: list[tuple] = []
 
-    def _makeFace(self, a: int, b: int, c: int) -> Optional[EPAFace]:
+    def _makeFace(self, a: int, b: int, c: int) -> EPAFace | None:
         edge1 = vec_sub(self.vertices[b].p, self.vertices[a].p)
         edge2 = vec_sub(self.vertices[c].p, self.vertices[a].p)
         normal = vec_cross(edge1, edge2)
@@ -65,7 +65,7 @@ class EPA:
         plane_dist = vec_dot(face.normal, vec_sub(vertex.p, self.vertices[face.a].p))
         return plane_dist > self.EPSILON
 
-    def _findHorizon(self, start_idx: int, vertex: SupportPoint) -> List[tuple]:
+    def _findHorizon(self, start_idx: int, vertex: SupportPoint) -> list[tuple]:
         horizon = []
         processed = set()
         
@@ -113,7 +113,7 @@ class EPA:
         
         return horizon_edges
 
-    def _barycentric(self, p: Tuple, a: Tuple, b: Tuple, c: Tuple) -> Tuple[float, float, float]:
+    def _barycentric(self, p: tuple, a: tuple, b: tuple, c: tuple) -> tuple[float, float, float]:
         v0 = vec_sub(c, a)
         v1 = vec_sub(b, a)
         v2 = vec_sub(p, a)
@@ -147,7 +147,7 @@ class EPA:
         
         return contact_a, contact_b
 
-    def expand(self, simplex: List[SupportPoint], collider_a, collider_b) -> Optional[ContactInfo]:
+    def expand(self, simplex: list[SupportPoint], collider_a, collider_b) -> ContactInfo | None:
         if len(simplex) < 4:
             return None
         
@@ -212,3 +212,7 @@ class EPA:
             )
         
         return None
+
+
+
+
