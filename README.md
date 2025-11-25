@@ -1,268 +1,130 @@
-# World Engine IDE
+# Echo Nexus / Recursive Narrative Stack — Overview
 
-A comprehensive, fully connected development environment that integrates mathematics, graphics, prefab pipelines, AI intelligence, metadata management, and web development into a cohesive, scalable system.
+## Deployment
 
-## 🌟 Features
-
-### Core Systems
-
-1. **Math Engine** - Pure mathematical computation
-   - Vector and matrix operations
-   - 3D transformations
-   - Geometric calculations
-   - Distance and spatial computations
-
-2. **Graphics Engine** - Visual rendering and processing
-   - Material system (PBR support)
-   - Shader management
-   - Render queue
-   - Default geometries (cube, sphere, etc.)
-
-3. **Prefab Pipeline** - Template-based asset creation
-   - Prefab registration and instantiation
-   - Component-based architecture
-   - Default prefabs (cube, sphere, light)
-   - Override system for customization
-
-4. **AI Intelligence** - Smart analysis and suggestions
-   - Pattern recognition
-   - Performance optimization insights
-   - Quality improvements
-   - Workflow predictions
-
-5. **MetaBase** - Comprehensive data management
-   - Schema-based storage
-   - Query system with filtering
-   - Import/export functionality
-   - Indexed search
-
-6. **Web Framework** - Web development tools
-   - Route management
-   - Component system
-   - Template rendering
-   - UI generation
-
-### System Integration
-
-**DataBus** - The central nervous system that connects all components:
-- Event-based communication
-- Subscribe/publish pattern
-- Message history tracking
-- Wildcard subscriptions
-- Real-time data sharing across all subsystems
-
-## 🚀 Getting Started
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/Colt45en/world-ide-engine.git
-cd world-ide-engine
-
-# Install dependencies (if any added)
-npm install
-```
-
-### Running the Engine
-
-```bash
-# Start the engine
-npm start
-
-# Development mode with auto-reload
-npm run dev
-
-# Run tests
-npm test
-
-# Build the project
-npm run build
-```
-
-## 📖 Architecture
-
-### System Overview
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    World Engine IDE                      │
-├─────────────────────────────────────────────────────────┤
-│                                                           │
-│  ┌──────────────┐          DataBus           ┌─────────┐│
-│  │ Math Engine  │◄──────────┬──────────────►│Graphics ││
-│  └──────────────┘           │                │Engine   ││
-│         ▲                   │                └─────────┘│
-│         │                   │                     ▲      │
-│         │                   │                     │      │
-│  ┌──────┴──────┐           │           ┌────────┴────┐ │
-│  │   Prefab    │◄──────────┼──────────►│     AI      │ │
-│  │  Pipeline   │           │           │Intelligence │ │
-│  └─────────────┘           │           └─────────────┘ │
-│         ▲                   │                     ▲      │
-│         │                   │                     │      │
-│  ┌──────┴──────┐           │           ┌────────┴────┐ │
-│  │  MetaBase   │◄──────────┴──────────►│    Web      │ │
-│  │  (Storage)  │                       │ Framework   │ │
-│  └─────────────┘                       └─────────────┘ │
-│                                                           │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Data Flow
-
-1. **Math to Graphics**: Mathematical calculations feed into visual rendering
-2. **Prefab Integration**: Prefabs utilize both math and graphics systems
-3. **AI Monitoring**: AI analyzes all system activities for optimization
-4. **MetaBase Storage**: All data is persisted and queryable
-5. **Web Interface**: Web framework provides UI for all systems
-
-## 💡 Usage Examples
-
-### Creating and Instantiating a Prefab
-
-```javascript
-import { WorldEngine } from './src/index.js';
-
-const engine = new WorldEngine();
-await engine.initialize();
-
-// Create a custom prefab
-engine.prefabPipeline.registerPrefab('custom-box', {
-  name: 'Custom Box',
-  components: {
-    geometry: { type: 'cube', size: [2, 2, 2] },
-    material: 'pbr',
-    transform: { position: [0, 1, 0] }
-  }
-});
-
-// Instantiate the prefab
-const instance = engine.prefabPipeline.instantiate({
-  prefabId: 'custom-box',
-  overrides: {
-    transform: { position: [5, 0, 0] }
-  }
-});
-```
-
-### Using the Math Engine
-
-```javascript
-// Perform calculations
-engine.dataBus.publish('math:compute', {
-  operation: 'distance',
-  params: {
-    p1: [0, 0, 0],
-    p2: [3, 4, 0]
-  }
-});
-
-// Subscribe to results
-engine.dataBus.subscribe('math:calculation', (data) => {
-  console.log('Result:', data.result);
-});
-```
-
-### Querying the MetaBase
-
-```javascript
-// Store data
-engine.dataBus.publish('meta:store', {
-  collection: 'assets',
-  id: 'asset_1',
-  value: {
-    name: 'My Texture',
-    type: 'texture',
-    path: '/assets/textures/wood.png'
-  }
-});
-
-// Query data
-const assets = engine.metaBase.query({
-  collection: 'assets',
-  filter: { type: 'texture' }
-});
-```
-
-### Creating Web Routes
-
-```javascript
-// Add a custom route
-engine.webFramework.addRoute('/custom', {
-  name: 'Custom Page',
-  handler: (params) => ({
-    title: 'Custom Page',
-    content: 'Your custom content here'
-  })
-});
-
-// Navigate to route
-engine.dataBus.publish('web:route', {
-  path: '/custom',
-  params: {}
-});
-```
-
-## 🔧 Configuration
-
-The system is designed to be modular and extensible. Each subsystem can be configured independently through the DataBus communication layer.
-
-### DataBus Channels
-
-- `math:*` - Math engine operations
-- `graphics:*` - Graphics rendering
-- `prefab:*` - Prefab management
-- `ai:*` - AI analysis and suggestions
-- `meta:*` - Data storage and retrieval
-- `web:*` - Web interface operations
-
-## 🧪 Testing
-
-The system includes built-in testing capabilities:
-
-```bash
-npm test
-```
-
-## 🔐 Security
-
-- No hardcoded credentials
-- Secure data storage patterns
-- Input validation on all subsystems
-- Safe event handling with error boundaries
-
-## 🤝 Contributing
-
-This is a foundational system designed to scale. Contributions are welcome to:
-- Add new subsystems
-- Enhance existing features
-- Improve performance
-- Expand AI capabilities
-- Add more prefabs and templates
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🎯 Roadmap
-
-- [ ] Advanced physics integration
-- [ ] Real-time collaboration
-- [ ] Plugin system
-- [ ] Visual scripting
-- [ ] Asset marketplace integration
-- [ ] Cloud synchronization
-- [ ] Advanced AI code generation
-- [ ] VR/AR support
-
-## 📞 Support
-
-For issues, questions, or suggestions, please open an issue on GitHub.
+1. Clone the repository.
+2. Open index.html directly in your browser **or** deploy it to any static hosting provider.
+3. (Optional) Connect to real external feeds by replacing xternal_data_fetcher_stub.js.
 
 ---
 
-**World Engine IDE** - Building the future of integrated development environments. 
-# world-ide-engine
-world engine ide graphic and game etc. environment 
-i also need copilet instructions for best development for the world engine ide 
+## Symbolic Entanglement
+
+Agents inherit symbolic fragments based on both:
+
+- Internal recursive events, and  
+- External real-world data (economic crises, cultural meme shifts, planetary anomalies).
+
+This system simulates recursive agent evolution as a **reflection of the collective symbolic field**.
+
+---
+
+## Suggested Uses
+
+- Recursive worldbuilding simulation  
+- Symbolic AI experiments  
+- Agent-based narrative design  
+- Recursive knowledge graph construction  
+- Fate-driven ARG systems  
+
+---
+
+## Echo Nexus 2.0 — Core Upgrades
+
+**Status:** Upgrading agents, expanding intelligence, evolving system.  
+**Mode:** Recursive optimization in progress.
+
+### 1. Multi-Agent Intelligence (Swarm)
+
+Previously: Agents worked separately (analyze, predict, etc.).  
+Now: Agents **communicate, adapt, and decide collectively** like a swarm.
+
+Core roles:
+
+- **Data Sentinel** – Monitors real-time market changes & macroeconomic shifts.  
+- **Trade Oracle** – Predicts trends & adjusts strategies.  
+- **Sentiment Watcher** – Analyzes news, social media, sentiment swings.  
+- **Strategy Architect** – Builds adaptive strategies across agents.  
+- **Risk Guardian** – Detects risks & optimizes decisions to prevent loss.  
+- **Code Automator** – Writes & refines algorithms autonomously.  
+- **Self-Evolver** – Evaluates agent performance and optimizes the system.
+
+> If one agent detects a high-risk event, it alerts the others in real-time.
+
+---
+
+### 2. Self-Adaptive Learning Loops
+
+Old: Manual fine-tuning.  
+New: AI **tracks its own performance** and improves without external intervention.
+
+Cycle:
+
+1. Data Intake → live market / sentiment / economic data.
+2. AI Decision → predictions + actions.
+3. Outcome Analysis → was it profitable / effective?
+4. Self-Optimization → adjust strategies based on mistakes.
+5. Repeat → continuous refinement.
+
+---
+
+### 3. Multi-Modal Reasoning
+
+Old: Mostly text-based.  
+New: Integrates:
+
+- Text (reports, transcripts)  
+- Numeric data (prices, volumes, indicators)  
+- Images/charts (technical analysis, heat maps)  
+- Live feeds (markets, macro, sentiment)
+
+Result: More complete situational picture, stronger decisions.
+
+---
+
+### 4. Decentralized AI Nodes
+
+Old: Centralized decision pipeline.  
+New: **Distributed agent network**:
+
+- Each agent operates independently but communicates with others.  
+- If one agent fails, others assume its responsibilities.  
+- Agents can "vote" on strategies before execution.  
+- No single point of failure.
+
+Result: Resilience + adaptive behavior similar to biological systems.
+
+---
+
+### 5. Autonomous Code Evolution
+
+Old: Humans wrote all updates.  
+New: Agents **rewrite and optimize their own algorithms**.
+
+Rough flow:
+
+1. Code Automator analyzes past algorithm performance.  
+2. Self-Evolver proposes new/updated models.  
+3. Risk Guardian validates changes to avoid catastrophic loss.  
+4. New models are tested and deployed.
+
+Result: The trading/decision engine keeps improving without constant human patching.
+
+---
+
+## Symbolic & Recursive Narrative Layer
+
+This stack also supports a **Recursive Narrative Ecosystem (RNE)**:
+
+- Characters, environments, objects, and subplots all act as **nodes in a recursive graph**.  
+- Every action/event feeds back into world memory and future possibilities.  
+- Swarm agents manage micro-layers (fight choreography, memory drift, subplots) while a **Fate Spine** maintains global consistency.
+
+Use-case styles:
+
+- Recursive campaign engines for GMs  
+- Fractal story engines for authors  
+- ARG systems with fate-bound, symbol-driven events  
+- Multi-timeline, memory-aware story worlds  
+
+For backend integration with **Recursive Keeper Nexus 3.0**, contact your Recursive Systems Architect.
