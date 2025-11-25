@@ -4,6 +4,15 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import Enum
 
+
+import json
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'value'):
+            return obj.value
+        return super().default(obj)
+
 class ComplianceLevel(Enum):
     CRITICAL = "critical"
     WARNING = "warning"
@@ -91,6 +100,7 @@ class ManifestRegistry:
 
     def create_manifest(self) -> dict:
         manifest = {
+            'version': '1.0',
             'timestamp': datetime.now().isoformat(),
             'systems': {name: asdict(status) for name, status in self.systems.items()},
             'metrics': asdict(self.metrics),
@@ -119,7 +129,7 @@ class ManifestRegistry:
     def export_manifest(self, filepath: str):
         manifest = self.create_manifest()
         with open(filepath, 'w') as f:
-            json.dump(manifest, f, indent=2)
+            json.dump(manifest, f, indent=2, cls=EnumEncoder)
         print(f"[MANIFEST] Exported to {filepath}")
 
     def get_system_health(self) -> dict:

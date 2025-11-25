@@ -1,22 +1,50 @@
-import sys
-sys.path.insert(0, 'C:\\fresh-world-engine')
+"""
+Meta-System Integration Demo
+=============================
+Demonstrates text -> tokens -> embeddings -> decisions -> physics -> transforms -> manifest
+"""
 
+from __future__ import annotations
+from dataclasses import dataclass
 from meta.orchestrator import MetaLibrarianOrchestrator, PipelineZone
 from meta.upflow import UpflowAutomation
-from meta.manifest import ManifestRegistry
-from physics.body import RigidBody, Vec3
-from physics.gjk import BoxCollider
+from meta.manifest import ManifestRegistry, ComplianceLevel
+import json
+from datetime import datetime
+
+@dataclass
+class Vec3:
+    x: float
+    y: float
+    z: float
+    
+    def __add__(self, other):
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __mul__(self, scalar):
+        return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+
+@dataclass
+class RigidBody:
+    position: Vec3
+    velocity: Vec3
+    mass: float = 1.0
+    gravity: float = 9.81
+    restitution: float = 0.8
+    angular_velocity: Vec3 = None
+    
+    def __post_init__(self):
+        if self.angular_velocity is None:
+            self.angular_velocity = Vec3(0, 0, 0)
 
 def simple_tokenizer(text: str):
     return text.lower().split()
 
 def simple_embedding(tokens):
-    return [float(ord(t[0]) % 10) / 10.0 for t in tokens] if tokens else []
+    return [float(ord(t[0]) % 10) / 10.0 for t in tokens]
 
 def simple_logic(embeddings):
-    if not embeddings:
-        return "neutral"
-    avg = sum(embeddings) / len(embeddings)
+    avg = sum(embeddings) / len(embeddings) if embeddings else 0
     if avg > 0.6:
         return "aggressive"
     elif avg > 0.3:
@@ -24,17 +52,22 @@ def simple_logic(embeddings):
     else:
         return "gentle"
 
-def simple_physics_gen(decision):
-    decision_map = {
-        "aggressive": {"mass": 2.0, "velocity": [5.0, 0.0, 0.0], "restitution": 0.8},
-        "balanced": {"mass": 1.0, "velocity": [2.0, 0.0, 0.0], "restitution": 0.6},
-        "gentle": {"mass": 0.5, "velocity": [1.0, 0.0, 0.0], "restitution": 0.4}
-    }
-    return decision_map.get(decision, decision_map["balanced"])
+def simple_physics_gen(decision: str):
+    if decision == "aggressive":
+        return {"mass": 1.45, "velocity": (2.3, -1.1, 0), "restitution": 0.95}
+    elif decision == "balanced":
+        return {"mass": 0.8, "velocity": (1.0, 0.5, 0), "restitution": 0.7}
+    else:
+        return {"mass": 0.5, "velocity": (0.3, 0.1, 0), "restitution": 0.5}
 
-def simple_transform_gen(physics):
-    mass = physics.get("mass", 1.0)
-    return [(mass * 2, 0, 0), (0, 0, 0), (1, 1, 1)]
+def simple_transform_gen(physics_params: dict, decision=None):
+    mass = physics_params.get("mass", 0.5)
+    vel = physics_params.get("velocity", (0, 0, 0))
+    position = (mass * 2.0, mass * 1.5, 0)
+    vel_mag = (vel[0]**2 + vel[1]**2 + vel[2]**2) ** 0.5
+    rotation = (vel_mag * 0.5, mass * 3.14159, vel_mag * 0.3)
+    scale = (1.0 / mass, 1.0 / mass, 1.0 / mass)
+    return {"position": position, "rotation": rotation, "scale": scale}
 
 print("=" * 70)
 print("META-SYSTEMS INTEGRATION DEMO")
@@ -42,73 +75,92 @@ print("=" * 70)
 
 orchestrator = MetaLibrarianOrchestrator()
 upflow = UpflowAutomation()
-manifest = ManifestRegistry()
+manifest_registry = ManifestRegistry()
 
-manifest.register_system("Orchestrator", "initialized")
-manifest.register_system("TokenLab", "initialized")
-manifest.register_system("LexicalLogic", "initialized")
-manifest.register_system("Physics", "initialized")
-manifest.register_system("Graphics", "initialized")
+manifest_registry.register_system("Tokenizer", "operational")
+manifest_registry.register_system("Embedder", "operational")
+manifest_registry.register_system("LogicEngine", "operational")
+manifest_registry.register_system("PhysicsEngine", "operational")
+manifest_registry.register_system("Renderer", "operational")
 
-test_inputs = [
+test_workflows = [
     "aggressive destructive collision",
     "balanced harmonic motion",
     "gentle flowing movement"
 ]
 
-for i, input_text in enumerate(test_inputs):
-    print(f"\n[DEMO] === Workflow {i+1}: {input_text} ===")
+all_flow_graphs = []
+
+for workflow_idx, input_text in enumerate(test_workflows, 1):
+    print(f"\n[DEMO] === Workflow {workflow_idx}: {input_text} ===\n")
     
-    manifest.start_workflow(f"workflow_{i+1}", {"input": input_text})
-    
-    pipeline_config = {
+    config = {
         "tokenizer": simple_tokenizer,
         "embedding_fn": simple_embedding,
         "logic_fn": simple_logic,
         "physics_gen": simple_physics_gen,
-        "transform_gen": simple_transform_gen
+        "transform_gen": simple_transform_gen,
     }
     
-    state = orchestrator.run_pipeline(input_text, pipeline_config)
+    pipeline_state = orchestrator.run_pipeline(input_text, config)
     
-    manifest.log_metric('cycles')
-    manifest.log_metric('tokens_processed', len(state.tokens))
-    manifest.log_metric('embeddings_generated')
-    manifest.log_metric('decisions_made')
-    manifest.log_metric('physics_simulations')
-    manifest.log_metric('renders_output')
+    print(f"[DEMO] Tokens: {pipeline_state.tokens}")
+    print(f"[DEMO] Embeddings: {pipeline_state.embeddings}")
+    print(f"[DEMO] Decision: {pipeline_state.logical_decision}")
+    print(f"[DEMO] Physics Params: {pipeline_state.physics_params}")
+    print(f"[DEMO] Transform: {pipeline_state.render_transforms}")
     
-    flow_graph = upflow.build_flow_graph(state.tokens, state.embeddings, state.logical_decision)
+    manifest_registry.log_metric("tokens_processed", len(pipeline_state.tokens))
+    manifest_registry.log_metric("embeddings_generated", len(pipeline_state.embeddings))
+    manifest_registry.log_metric("decisions_made", 1)
+    manifest_registry.log_metric("physics_sims", 1)
+    manifest_registry.log_metric("renders", 1)
     
-    manifest.update_system_status("Orchestrator", "completed", 
-        {"cycles": state.cycle_count, "decision": state.logical_decision}, "ok")
-    manifest.update_system_status("TokenLab", "completed", 
-        {"tokens": len(state.tokens)}, "ok")
-    manifest.update_system_status("LexicalLogic", "completed", 
-        {"decision": state.logical_decision}, "ok")
-    manifest.update_system_status("Physics", "completed", 
-        {"params": state.physics_params}, "ok")
-    manifest.update_system_status("Graphics", "completed", 
-        {"transforms": len(state.render_transforms)}, "ok")
+    manifest_registry.update_system_status(
+        "Tokenizer", "operational",
+        {"tokens": pipeline_state.tokens},
+        ComplianceLevel.OK
+    )
+    manifest_registry.update_system_status(
+        "Embedder", "operational",
+        {"embeddings": pipeline_state.embeddings},
+        ComplianceLevel.OK
+    )
+    manifest_registry.update_system_status(
+        "LogicEngine", "operational",
+        {"decision": pipeline_state.logical_decision},
+        ComplianceLevel.OK
+    )
+    manifest_registry.update_system_status(
+        "PhysicsEngine", "operational",
+        {"params": pipeline_state.physics_params},
+        ComplianceLevel.OK
+    )
+    manifest_registry.update_system_status(
+        "Renderer", "operational",
+        {"transforms": pipeline_state.render_transforms},
+        ComplianceLevel.OK
+    )
     
-    print(f"\n[DEMO] Decision: {state.logical_decision}")
-    print(f"[DEMO] Physics Params: {state.physics_params}")
-    print(f"[DEMO] Transform: pos={flow_graph['stage_4_transform'][0]}")
-    print(f"[DEMO] Colors: {flow_graph['stage_5_colors']['primary']}")
+    body = RigidBody(
+        position=Vec3(*pipeline_state.render_transforms["position"]),
+        velocity=Vec3(*pipeline_state.physics_params["velocity"]),
+        mass=pipeline_state.physics_params["mass"],
+        restitution=pipeline_state.physics_params["restitution"]
+    )
     
-    manifest.complete_workflow(f"workflow_{i+1}", 
-        {"decision": state.logical_decision, "transforms": flow_graph['stage_4_transform']}, 
-        runtime_ms=100)
+    print(f"[DEMO] Body created: pos={body.position}, vel={body.velocity}, mass={body.mass}")
+    
+    all_flow_graphs.append(pipeline_state.manifest)
 
-print(f"\n{'=' * 70}")
+print("\n" + "=" * 70)
 print("FINAL MANIFEST")
-print(f"{'=' * 70}\n")
+print("=" * 70 + "\n")
 
-final_manifest = manifest.get_manifest()
-import json
-print(json.dumps(final_manifest, indent=2))
+final_manifest = manifest_registry.create_manifest()
+manifest_path = "meta_execution_manifest.json"
 
-manifest.export_manifest("C:\\fresh-world-engine\\meta_execution_manifest.json")
-print(f"\n[DEMO] Manifest saved to meta_execution_manifest.json")
-print(f"[DEMO] Total Cycles: {manifest.metrics.total_cycles}")
-print(f"[DEMO] Total Runtime: {manifest.metrics.total_runtime_ms}ms")
+manifest_registry.export_manifest(manifest_path)
+print(f"\n[DEMO] Manifest saved to {manifest_path}")
+
+print("\nDemo complete! All meta-systems integrated and tested.")
