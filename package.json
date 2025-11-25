@@ -21,6 +21,10 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@react-three/fiber": "^9.4.0",
+    "node": "^25.2.1",
+    "react": "^19.2.0",
+    "zustand": "^5.0.8"
+  }
 }
