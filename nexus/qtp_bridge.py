@@ -1,6 +1,5 @@
-﻿# nexus/qtp_bridge.py
-# Safe bridge for providing engine-frame packets to the bus server.
-# Tries compiled extension engine.qtp or qtp; otherwise uses a Python shim.
+﻿# nexus/qtp_bridge.py - repaired
+# Provides generate_frame_packet(tick) using engine.qtp or a Python fallback shim.
 
 import importlib
 import logging
@@ -17,7 +16,6 @@ for candidate in ('engine.qtp', 'qtp'):
     except Exception:
         continue
 
-# Fallback Python shim (if compiled module isn't available)
 if QTP is None:
     logging.info('qtp_bridge: falling back to Python shim')
 
@@ -83,7 +81,6 @@ if QTP is None:
 
     QTP = type('qtpshim', (), {'QuantumThoughtPipeline': QuantumThoughtPipeline})
 
-# single pipeline instance for the bus
 _pipeline = None
 try:
     _pipeline = QTP.QuantumThoughtPipeline()
@@ -91,9 +88,9 @@ try:
 except Exception as e:
     logging.warning('qtp_bridge: failed to instantiate pipeline: %s', e)
 
-# helper
 
 def _to_list3(val):
+    " Return a 3-length list of floats from tuple/list/ndarray input."
     try:
         if hasattr(val, 'tolist'):
             v = val.tolist()
@@ -108,10 +105,17 @@ def generate_frame_packet(tick: int = 0) -> dict:
     try:
         if _pipeline is None:
             raise RuntimeError('pipeline not available')
+
         zones = []
         for i, z in enumerate(_pipeline.getZones()):
-            pos = getattr(z, 'position_np', None) or getattr(z, 'position', None)
-            scale = getattr(z, 'scale_np', None) or getattr(z, 'scale', None)
+            pos = getattr(z, 'position_np', None)
+            if pos is None:
+                pos = getattr(z, 'position', None)
+
+            scale = getattr(z, 'scale_np', None)
+            if scale is None:
+                scale = getattr(z, 'scale', None)
+
             zones.append({
                 'id': getattr(z, 'name', f'zone_{i}'),
                 'name': getattr(z, 'name', f'zone_{i}'),
@@ -122,7 +126,10 @@ def generate_frame_packet(tick: int = 0) -> dict:
             })
 
         agent = _pipeline.getAgent()
-        agent_pos = getattr(agent, 'position_np', None) or getattr(agent, 'position', None)
+        agent_pos = getattr(agent, 'position_np', None)
+        if agent_pos is None:
+            agent_pos = getattr(agent, 'position', None)
+
         return {
             'tick': tick,
             'fps': 60,
