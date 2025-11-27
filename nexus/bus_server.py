@@ -41,6 +41,10 @@ async def broadcast_loop():
         # generate engine-driven frame packet
         packet = qtp_bridge.generate_frame_packet(tick)
 
+        data = json.dumps(packet)
+
+        data = json.dumps(packet)
+
         # broadcast to all connected websockets
         closed = []
         for ws in list(clients):
