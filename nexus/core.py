@@ -175,6 +175,40 @@ class NexusEvaluator:
 
         return None
 
+    def raycast_mesh_triangles(self, origin: Vector3, direction: Vector3, triangles: list, two_sided: bool = True):
+        """Raycast against a list of triangles.
+
+        `triangles` should be an iterable of (a,b,c) where each is a 3-tuple (x,y,z)
+        Returns a CollisionInfo for the closest hit or None.
+        """
+        # lazy load transform_unified by file path to avoid stdlib `math` name collisions
+        import importlib.util, os
+        tf_path = os.path.join(os.path.dirname(__file__), '..', 'math', 'transform_unified.py')
+        spec = importlib.util.spec_from_file_location('transform_unified', tf_path)
+        tf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tf)
+        ray_triangle_mt = tf.ray_triangle_mt
+
+        closest = None
+        best_t = float('inf')
+
+        orig = (origin.x, origin.y, origin.z)
+        dirv = (direction.x, direction.y, direction.z)
+
+        for tri in triangles:
+            a, b, c = tri
+            hit = ray_triangle_mt(orig, dirv, a, b, c, two_sided=two_sided)
+            if hit and hit['t'] < best_t:
+                best_t = hit['t']
+                pos = hit['pos']
+                # estimate normal using cross product of edges
+                e1 = Vector3(b[0]-a[0], b[1]-a[1], b[2]-a[2])
+                e2 = Vector3(c[0]-a[0], c[1]-a[1], c[2]-a[2])
+                normal = e1.cross(e2).normalize()
+                closest = CollisionInfo(body_id=-1, contact_point=Vector3(*pos), normal=normal, penetration_depth=0.0)
+
+        return closest
+
     def _estimate_normal(self, point: Vector3, world_fn: Callable) -> Vector3:
         """Estimate surface normal via finite differences."""
         eps = 0.01

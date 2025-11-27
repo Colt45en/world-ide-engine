@@ -265,3 +265,50 @@ Run `python test_orchestrator.py` to verify:
 - Lexical Logic: `nexus-sase-trainer.html`
 - Knowledge Vault: `knowledge-vault-dashboard.html`
 - Meta Learning: `meta learning.txt`
+
+## Buses and Game Environment
+
+### Math Bus
+**Location**: `src/buses/mathBus.ts`
+
+Handles mathematical computations and seeding:
+- **Seeding**: Upgraded LCG random number generator with configurable seed
+- **Operations**: Vector normalization, matrix transposition, random generation
+- **Error Handling**: Validates input dimensions, handles division by zero
+- **Links to**: Graphics Bus (noise updates)
+
+### Graphics Bus
+**Location**: `src/buses/graphicsBus.ts`
+
+Manages rendering state and assets:
+- **State**: Noise, colors, textures, render modes
+- **Operations**: Texture generation, color palette management
+- **Error Handling**: Validates color formats, texture loading
+- **Links to**: Animation Bus (color palette updates)
+
+### Animation Bus
+**Location**: `src/buses/animationBus.ts`
+
+Controls animation sequences and timing:
+- **State**: Frame counter, speed, keyframes, color palette
+- **Operations**: Play/pause, keyframe management
+- **Error Handling**: Frame bounds checking, speed validation
+- **Links to**: Game Environment (frame updates)
+
+### Game Environment
+**Location**: `src/game/GameEnvironment.tsx`
+
+Dashboard with preview rendering screen:
+- **Components**: 3D preview canvas, control buttons
+- **Integration**: Subscribes to all buses for real-time updates
+- **Features**: Load game states, preview animations
+- **Links**: Receives from Animation Bus, controls buses
+
+### Bus Flow Diagram
+```
+Math Bus → Graphics Bus → Animation Bus → Game Environment
+    ↓           ↓              ↓
+  Seeding     Rendering     Animation
+  Vectors     Textures      Keyframes
+  Matrices    Colors        Timing
+```

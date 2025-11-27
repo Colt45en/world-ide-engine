@@ -274,6 +274,67 @@ def unprojectMouse(mouseX: float, mouseY: float,
     
     return (Vec3(0, 0, 0), Vec3(0, 0, 1))
 
+
+def ray_triangle_mt(orig: tuple[float, float, float], dir: tuple[float, float, float],
+                    a: tuple[float, float, float], b: tuple[float, float, float], c: tuple[float, float, float],
+                    two_sided: bool = False, t_min: float = 1e-6, t_max: float = float('inf')):
+    """Möller–Trumbore ray-triangle intersection in Python.
+
+    Returns None or dict with keys: t, u, v, w0, w1, w2, pos
+    """
+    def sub(p, q):
+        return (p[0]-q[0], p[1]-q[1], p[2]-q[2])
+
+    def dot(p, q):
+        return p[0]*q[0] + p[1]*q[1] + p[2]*q[2]
+
+    def cross(p, q):
+        return (
+            p[1]*q[2] - p[2]*q[1],
+            p[2]*q[0] - p[0]*q[2],
+            p[0]*q[1] - p[1]*q[0]
+        )
+
+    eps_det = 1e-12
+
+    ab = sub(b, a)
+    ac = sub(c, a)
+    p = cross(dir, ac)
+    det = dot(ab, p)
+
+    if not two_sided:
+        if det <= eps_det:
+            return None
+    else:
+        if abs(det) <= eps_det:
+            return None
+
+    tvec = sub(orig, a)
+    if two_sided and det < 0:
+        det = -det
+        tvec = (-tvec[0], -tvec[1], -tvec[2])
+
+    inv_det = 1.0 / det
+    u = dot(tvec, p) * inv_det
+    if u < 0 or u > 1:
+        return None
+
+    q = cross(tvec, ab)
+    v = dot(dir, q) * inv_det
+    if v < 0 or (u + v) > 1:
+        return None
+
+    t = dot(ac, q) * inv_det
+    if t < t_min or t > t_max:
+        return None
+
+    w1 = u
+    w2 = v
+    w0 = 1 - u - v
+    pos = (orig[0] + dir[0] * t, orig[1] + dir[1] * t, orig[2] + dir[2] * t)
+
+    return { 't': t, 'u': u, 'v': v, 'w0': w0, 'w1': w1, 'w2': w2, 'pos': pos }
+
 def projectMouse(worldPos: Vec3, viewProj: Mat4, 
                  screenWidth: float, screenHeight: float) -> tuple:
     """Project 3D world position to 2D screen (inverse of unproject)."""
