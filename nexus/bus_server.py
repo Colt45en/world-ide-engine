@@ -19,6 +19,8 @@ try:
 except Exception:
     import qtp_bridge
 
+from engine.world_engine_orchestrator import WorldEngineOrchestrator
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,13 +35,19 @@ app.add_middleware(
 )
 
 clients: Set[WebSocket] = set()
+orchestrator: WorldEngineOrchestrator = None
 
 async def broadcast_loop():
+    global orchestrator
     tick = 0
     while True:
         tick += 1
         # generate engine-driven frame packet
         packet = qtp_bridge.generate_frame_packet(tick)
+
+        # step the orchestrator with the packet
+        if orchestrator:
+            orchestrator.step(packet)
 
         data = json.dumps(packet)
 
@@ -63,6 +71,8 @@ async def broadcast_loop():
 
 @app.on_event("startup")
 async def on_startup():
+    global orchestrator
+    orchestrator = WorldEngineOrchestrator()
     # start background broadcaster
     app.state.broadcast_task = asyncio.create_task(broadcast_loop())
 
@@ -92,6 +102,25 @@ async def stream(ws: WebSocket):
         clients.discard(ws)
         logging.info(f"WS disconnect: {ws.client}")
 
+
+@app.get("/metrics")
+async def metrics():
+    if orchestrator:
+        return orchestrator.get_metrics()
+    return {"error": "orchestrator not initialized"}
+
+@app.get("/frame")
+async def get_frame():
+    if orchestrator:
+        return orchestrator.get_current_frame()
+    return {"error": "orchestrator not initialized"}
+
+@app.post("/query")
+async def query(req: Request):
+    payload = await req.json()
+    if orchestrator:
+        return orchestrator.query(payload)
+    return {"error": "orchestrator not initialized"}
 
 @app.post("/command")
 async def command(req: Request):
