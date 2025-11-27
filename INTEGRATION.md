@@ -308,7 +308,7 @@ Analysis: ✓ CONVERGED in 1 step, stable for 4 cycles
 - Feeds back to orchestrator for next cycle
 - Tracks convergence across N cycles
 
-## Python 3.13 Compatibility
+## Python 3.12 Compatibility
 
 All modules use native type hints (no `from typing import`):
 - `tuple[X, Y, Z]` instead of `Tuple[X, Y, Z]`

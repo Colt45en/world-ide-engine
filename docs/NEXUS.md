@@ -223,7 +223,7 @@ print(f"Refinements needed: {output.feedback_recommendations['refinement_suggest
 
 ## Next Steps
 
-1. Fix numpy/Python 3.13 compatibility
+1. Fix numpy/Python 3.12 compatibility
 2. Run full demo with sample data
 3. Integrate with morphing pipeline
 4. Create visualization layer

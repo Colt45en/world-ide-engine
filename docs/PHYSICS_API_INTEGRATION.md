@@ -262,11 +262,11 @@ useEffect(() => {
 
 ## Environment Notes
 
-### Python 3.13 Compatibility
-- Python 3.13.7 has a typing.py regression that prevents numpy/scipy from importing
+### Python 3.12 Compatibility
+- Python 3.12.7 has a typing.py regression that prevents numpy/scipy from importing
 - The API gracefully degrades to **mock physics mode** when imports fail
 - Both real and mock modes expose identical REST interfaces
-- To use real physics: Install Python 3.12 or earlier, or wait for numpy Python 3.13 fix
+- To use real physics: Install Python 3.12 or earlier, or wait for numpy Python 3.12 fix
 
 ### Running in Mock Mode
 When physics engine unavailable, the API:

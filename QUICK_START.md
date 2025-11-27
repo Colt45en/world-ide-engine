@@ -206,7 +206,7 @@ When Python environment works (Python 3.12+):
 - Full simulation accuracy
 
 ### Mock Physics Mode
-When numpy unavailable (Python 3.13 issue):
+When numpy unavailable (Python 3.12 issue):
 - Generates realistic physics state
 - All endpoints still work
 - Perfect for UI development
@@ -253,7 +253,7 @@ Both modes expose **identical API** to frontend.
 - Check green status indicator in header
 
 **Physics API crashes?**
-- This is the Python 3.13 numpy issue
+- This is the Python 3.12 numpy issue
 - Workaround: Use mock physics mode (already active)
 - Solution: Use Python 3.12
 

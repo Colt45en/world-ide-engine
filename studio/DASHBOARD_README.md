@@ -310,7 +310,7 @@ Response: {"applied": true, "prophecy": "..."}
 
 ### Physics API crashes on startup
 
-1. Python 3.13 typing.py issue - Use Python 3.12 or wait for numpy fix
+1. Python 3.12 typing.py issue - Use Python 3.12 or wait for numpy fix
 
 2. Missing dependencies:
    ```bash

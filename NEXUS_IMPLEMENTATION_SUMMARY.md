@@ -252,7 +252,7 @@ User Input (voxel volume + intent)
 
 ## Next Steps
 
-1. **Fix numpy/Python 3.13 compatibility** (current blocker for demo execution)
+1. **Fix numpy/Python 3.12 compatibility** (current blocker for demo execution)
 2. **Run full demo** with sample data
 3. **Create visualization layer** (mesh rendering, color display)
 4. **Integrate with morphing pipeline** (morphing outputs → Nexus evaluation)

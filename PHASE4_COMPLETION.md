@@ -119,7 +119,7 @@ Dashboard (real-time visualization)
 - ✅ Dashboard: displays metrics from all systems
 
 ### Code Quality
-- ✅ Python 3.13 compatible (native type hints, no typing imports)
+- ✅ Python 3.12 compatible (native type hints, no typing imports)
 - ✅ ~2300 lines of new code across 8 files
 - ✅ All modules tested and verified working
 - ✅ Clean separation of concerns (bridges, API, frontend)
