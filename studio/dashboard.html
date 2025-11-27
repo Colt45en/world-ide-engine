@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh World Orchestrator Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .card.physics {
+            border-left-color: #ff6b6b;
+        }
+
+        .card.graphics {
+            border-left-color: #4ecdc4;
+        }
+
+        .card.procedural {
+            border-left-color: #ffa502;
+        }
+
+        .card.feedback {
+            border-left-color: #95e1d3;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .input-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .feedback-history {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 3px;
+        }
+
+        .feedback-item.converged {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌍 Fresh World Orchestrator</h1>
+            <p>Integrated Physics, Graphics & Procedural Generation System</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2>Text Input</h2>
+            <div class="input-group">
+                <label>Enter orchestration text:</label>
+                <textarea id="textInput" placeholder="e.g., aggressive physics simulation with procedural generation"
+                    rows="3"></textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="orchestrate()">Process Input</button>
+                <button class="btn-primary" onclick="decodeInput()">Decode Input</button>
+                <button class="btn-secondary" onclick="runPhysics()">Create Physics Body</button>
+                <button class="btn-secondary" onclick="runGraphics()">Create Graphics Object</button>
+                <button class="btn-secondary" onclick="runProcedural()">Generate Mesh</button>
+                <button class="btn-secondary" onclick="runFeedback()">Run Feedback Loop</button>
+            </div>
+            <div id="status" class="status"></div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid">
+            <div class="card physics">
+                <h2>⚙️ Physics</h2>
+                <div class="metric">
+                    <span class="metric-label">Active Bodies</span>
+                    <span class="metric-value" id="physics-bodies">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Integration Steps</span>
+                    <span class="metric-value" id="physics-steps">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Body Mass</span>
+                    <span class="metric-value" id="physics-mass">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Velocity (m/s)</span>
+                    <span class="metric-value" id="physics-velocity">-</span>
+                </div>
+            </div>
+
+            <div class="card graphics">
+                <h2>🎨 Graphics</h2>
+                <div class="metric">
+                    <span class="metric-label">Scene Objects</span>
+                    <span class="metric-value" id="graphics-objects">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Lights</span>
+                    <span class="metric-value" id="graphics-lights">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Total Renders</span>
+                    <span class="metric-value" id="graphics-renders">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Color</span>
+                    <span class="metric-value" id="graphics-color">-</span>
+                </div>
+            </div>
+
+            <div class="card procedural">
+                <h2>🔮 Procedural</h2>
+                <div class="metric">
+                    <span class="metric-label">Generators</span>
+                    <span class="metric-value" id="procedural-generators">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Generations</span>
+                    <span class="metric-value" id="procedural-generations">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Vertices</span>
+                    <span class="metric-value" id="procedural-vertices">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Faces</span>
+                    <span class="metric-value" id="procedural-faces">-</span>
+                </div>
+            </div>
+
+            <div class="card feedback">
+                <h2>🔄 Orchestrator</h2>
+                <div class="metric">
+                    <span class="metric-label">Decision</span>
+                    <span class="metric-value" id="orch-decision">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Token Count</span>
+                    <span class="metric-value" id="orch-tokens">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Embeddings</span>
+                    <span class="metric-value" id="orch-embeddings">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Status</span>
+                    <span class="metric-value" id="orch-status">Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback History -->
+        <div class="feedback-history">
+            <h2>📊 System Activity</h2>
+            <div id="feedbackContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock API calls for demo (would connect to actual backend)
+
+        function updateStatus(message, isError = false) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + (isError ? 'error' : 'success');
+            setTimeout(() => statusEl.className = 'status', 3000);
+        }
+
+        function addFeedbackItem(text, isConverged = false) {
+            const container = document.getElementById('feedbackContainer');
+            const item = document.createElement('div');
+            item.className = 'feedback-item' + (isConverged ? ' converged' : '');
+            item.textContent = text;
+            container.insertBefore(item, container.firstChild);
+        }
+
+        async function orchestrate() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                updateStatus('Please enter text input', true);
+                return;
+            }
+
+            updateStatus('Processing... ' + '<span class="loading"></span>');
+
+            setTimeout(() => {
+                document.getElementById('orch-decision').textContent = 'Aggressive';
+                document.getElementById('orch-tokens').textContent = '42';
+                document.getElementById('orch-embeddings').textContent = '768';
+                addFeedbackItem('Orchestrated: "' + text + '" → Decision: Aggressive');
+                updateStatus('✓ Orchestration complete');
+            }, 800);
+        }
+
+        function runPhysics() {
+            updateStatus('Creating physics body...');
+            setTimeout(() => {
+                document.getElementById('physics-bodies').textContent = '1';
+                document.getElementById('physics-steps').textContent = '3';
+                document.getElementById('physics-mass').textContent = '1.53';
+                document.getElementById('physics-velocity').textContent = '3.09';
+                addFeedbackItem('Physics: RigidBody created (mass=1.53, velocity=3.09 m/s)');
+                updateStatus('✓ Physics body created');
+            }, 600);
+        }
+
+        function runGraphics() {
+            updateStatus('Creating graphics object...');
+            setTimeout(() => {
+                document.getElementById('graphics-objects').textContent = '1';
+                document.getElementById('graphics-lights').textContent = '0';
+                document.getElementById('graphics-renders').textContent = '1';
+                document.getElementById('graphics-color').textContent = 'hsl(0°, 100%, 100%)';
+                addFeedbackItem('Graphics: Cube created at (0,0,0) with HSL color');
+                updateStatus('✓ Graphics object created');
+            }, 600);
+        }
+
+        function runProcedural() {
+            updateStatus('Generating mesh...');
+            setTimeout(() => {
+                document.getElementById('procedural-generators').textContent = '1';
+                document.getElementById('procedural-generations').textContent = '1';
+                document.getElementById('procedural-vertices').textContent = '4225';
+                document.getElementById('procedural-faces').textContent = '8192';
+                addFeedbackItem('Procedural: Julia fractal generated (detail=6, 4225 vertices)');
+                updateStatus('✓ Mesh generated');
+            }, 1000);
+        }
+
+        function runFeedback() {
+            updateStatus('Running feedback loop...');
+            setTimeout(() => {
+                addFeedbackItem('Cycle 1: aggressive → Parameters stable');
+                setTimeout(() => {
+                    addFeedbackItem('Cycle 2: aggressive → Parameters stable');
+                    setTimeout(() => {
+                        addFeedbackItem('Cycle 3: aggressive → Converged ✓', true);
+                        updateStatus('✓ Feedback loop converged');
+                    }, 400);
+                }, 400);
+            }, 600);
+        }
+
+        function decodeInput() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                updateStatus('Please enter text input', true);
+                return;
+            }
+
+            updateStatus('Decoding input...');
+            setTimeout(() => {
+                // Simple decoder: if input contains "rune", try to decode rune number
+                const runeMatch = text.match(/rune\s+(\d+)/i);
+                if (runeMatch) {
+                    const runeNum = parseInt(runeMatch[1]);
+                    const decoded = decodeRune(runeNum);
+                    addFeedbackItem('Decoded Rune ' + runeNum + ': ' + decoded);
+                    updateStatus('✓ Rune decoded');
+                } else {
+                    // Fallback: reverse the text or something
+                    const decoded = text.split('').reverse().join('');
+                    addFeedbackItem('Decoded: ' + decoded);
+                    updateStatus('✓ Input decoded');
+                }
+            }, 500);
+        }
+
+        function decodeRune(num) {
+            const runes = {
+                1: 'Scene + Renderer Bootstrap',
+                2: 'Sun + Ambient Lighting With Shadows',
+                3: 'Procedural Terrain Heightfield',
+                4: 'Prop Scattering (Trees, Rocks)',
+                5: 'Parametric Castle Prefab',
+                6: 'Knight NPC Generator With Built-In Walk Cycle',
+                7: 'Global Game State',
+                8: 'Spawning + UI Sync',
+                9: 'Input Binding (WASD + Drag Look)',
+                10: 'Main Simulation Loop',
+                11: 'Avatar Pipeline Bridge',
+                12: 'GlyphRenderer (Floating Fading Markers)'
+            };
+            return runes[num] || 'Unknown Rune';
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            addFeedbackItem('🚀 Dashboard initialized and ready for input');
+        });
+    </script>
+</body>
+
+</html>
