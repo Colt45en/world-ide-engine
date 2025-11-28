@@ -12,12 +12,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, Optional, Tuple
 
-# Try to import physics components
-try:
-    from physics.body import RigidBody, Vector3 as PhysicsVector3
-except ImportError:
-    PhysicsVector3 = None
-    RigidBody = None
+# Note: physics.body module may provide RigidBody and Vector3 in the future
+# for integration with a more advanced physics engine
 
 
 @dataclass
@@ -178,10 +174,16 @@ class PhysicsOrchestratorBridge:
             # Ground collision (simple plane at y=0)
             if body.position.y < 0:
                 body.position = Vector3(body.position.x, 0, body.position.z)
-                # Bounce
+                # Bounce: reflect velocity and apply restitution
+                # In Verlet, velocity is implicit from position difference
+                # To bounce, we set old_position such that the next position difference
+                # gives upward velocity
+                current_vel_y = body.velocity.y
+                bounced_vel_y = -current_vel_y * body.restitution
+                # old_position.y should be: position.y - bounced_vel_y * dt
                 body.old_position = Vector3(
                     body.old_position.x,
-                    -body.old_position.y * body.restitution,
+                    body.position.y - bounced_vel_y * dt,
                     body.old_position.z
                 )
         

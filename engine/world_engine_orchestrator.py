@@ -44,6 +44,9 @@ def _get_nexus_core():
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Configuration constants
+DEFAULT_SPAWN_HEIGHT = 10.0  # Default Y position for spawned entities
+
 
 class AgentState(Enum):
     """State of the Nexus Agent."""
@@ -306,7 +309,7 @@ class NexusAgent:
         mass = physics_params.get('mass', 1.0)
         
         # Spawn a body
-        pos = Vector3(0, 10, 0)  # Start above ground
+        pos = Vector3(0, DEFAULT_SPAWN_HEIGHT, 0)  # Start above ground
         vel = Vector3(velocity[0], velocity[1], velocity[2]) if velocity else None
         
         body = self.nexus_core.spawn_body(
@@ -343,7 +346,7 @@ class NexusAgent:
         }
         
         if self.nexus_core:
-            state['physics'] = self.nexus_core._gather_physics_state()
+            state['physics'] = self.nexus_core.get_physics_state()
         
         if self.meta_orchestrator:
             state['orchestrator'] = self.meta_orchestrator.get_status()

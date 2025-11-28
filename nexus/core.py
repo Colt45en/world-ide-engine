@@ -370,6 +370,13 @@ class NexusCore:
         # Return physics state for aesthetics feedback
         return self._gather_physics_state()
 
+    def get_physics_state(self) -> dict:
+        """Get current physics state metrics.
+        
+        Public interface for accessing physics state without stepping simulation.
+        """
+        return self._gather_physics_state()
+
     def _gather_physics_state(self) -> dict:
         """Collect physics metrics for aesthetic evaluation."""
         total_ke = sum(body.kinetic_energy for body in self.entities)

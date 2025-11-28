@@ -9,9 +9,13 @@ Generates fractal-seeded meshes based on:
 
 from __future__ import annotations
 import math
+import random
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, Optional, Tuple
+
+# Constants
+COLOR_SEED_XOR_MASK = 0xDEAD  # XOR mask for deriving color seed from main seed
 
 
 @dataclass
@@ -86,7 +90,6 @@ class FractalGenerator:
     @staticmethod
     def generate_terrain(size: int, amplitude: float, seed: int) -> Tuple[List, List]:
         """Generate simple terrain mesh using diamond-square algorithm."""
-        import random
         random.seed(seed)
         
         # Create height map
@@ -235,7 +238,7 @@ class OrchestratorProceduralBridge:
             detail_level=detail_level,
             scale=physics_params.get('mass', 1.0),
             noise_amplitude=avg_embedding * 0.5,
-            color_seed=seed ^ 0xDEAD
+            color_seed=seed ^ COLOR_SEED_XOR_MASK
         )
         
         # Generate mesh
