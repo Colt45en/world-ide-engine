@@ -1,6 +1,7 @@
 from meta.orchestrator import MetaLibrarianOrchestrator, PipelineZone, PipelineState
 from meta.upflow import UpflowAutomation
 from meta.manifest import ManifestRegistry, ComplianceLevel
+from meta.physics_integration import PhysicsOrchestratorBridge, PhysicsState
 
 __all__ = [
     "MetaLibrarianOrchestrator",
@@ -8,5 +9,7 @@ __all__ = [
     "PipelineState",
     "UpflowAutomation",
     "ManifestRegistry",
-    "ComplianceLevel"
+    "ComplianceLevel",
+    "PhysicsOrchestratorBridge",
+    "PhysicsState"
 ]
