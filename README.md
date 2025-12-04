@@ -1,53 +1,369 @@
 # 🌍 Fresh World Engine
 
-A comprehensive game development and world simulation platform featuring recursive agent systems, mathematical visualization, physics integration, and modular architecture.
+> **A Biomimetic AI Platform for Autonomous World-Building**
+
+[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)]()
+[![Python](https://img.shields.io/badge/python-3.12-yellow.svg)]()
+[![C++](https://img.shields.io/badge/C++-17-orange.svg)]()
 
 ---
 
-## 🚀 Quick Start
+## 📚 Core Documentation
 
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Open browser to http://localhost:5173
-```
-
-**Alternative - Static Server:**
-```bash
-python -m http.server 8080
-# Open http://localhost:8080/studio/world-engine-studio.html
-```
+| Document | Purpose |
+|----------|---------|
+| **[NEXUS_AI_BLUEPRINT.md](docs/core/NEXUS_AI_BLUEPRINT.md)** | Complete technical specification |
+| **[STARTUP_GUIDE.md](docs/core/STARTUP_GUIDE.md)** | Get running in 2 minutes |
+| **[ARCHITECTURE.md](docs/core/ARCHITECTURE.md)** | Deep-dive into components |
 
 ---
 
-## 📁 Project Structure
+## ⚡ Quick Start (2 Minutes)
+
+```powershell
+# Terminal 1: Start the Brain (launches everything)
+py -3.12 nexus_swarm/nexus_trainer_loop.py
+
+# Terminal 2: Start HTTP Server
+py -3.12 -m http.server 8888
+
+# Open browser
+start http://localhost:8888/nexus_analytics_dashboard.html
+```
+
+**That's it!** See [STARTUP_GUIDE.md](docs/core/STARTUP_GUIDE.md) for details.
+
+---
+
+## 🧬 System Overview
+
+| Component | Language | Port | Purpose |
+|-----------|----------|------|---------|
+| 🧠 **Nucleus Eye** | Python | 8765 | Central nervous system |
+| 👁️ **NovaOmega** | C++ | - | Context management |
+| 🐝 **SwarmMind** | Python | - | 9 autonomous agents |
+| 🎵 **Holy Beat** | C++ | - | Audio→Tensor pipeline |
+| 🧮 **Tensor Core** | C++ | 8085 | Mathematical resonance |
+
+---
+
+## 🐝 The 9 Agents
+
+| Agent | Role | Agent | Role |
+|-------|------|-------|------|
+| 🔮 Oracle | Strategy | 🎓 Trainer | ML Training |
+| 🎯 Strategist | Planning | 🔍 Auditor | Code Review |
+| 🏗️ Architect | Design | 🧪 Tester | QA |
+| 💻 Coder | Implementation | 🎨 Designer | UI/Assets |
+| 🧹 Janitor | Maintenance | | |
+
+---
+
+## 📁 Key Files
 
 ```
 fresh-world-engine/
-├── 📂 studio/              # Main development dashboards (START HERE)
-│   ├── world-engine-studio.html    # Master control center
-│   ├── game-hub.html               # Game launcher & catalog
-│   ├── nexus-world-layer.html      # 3D world viewport
-│   ├── game-environment.html       # Game dev environment
-│   ├── map-orchestrator-bus.html   # Map & tile system
-│   ├── nexus-settings-hub.html     # Central settings
-│   ├── story-ide.html              # Story writing IDE
-│   └── ...more tools
-│
-├── 📂 game/                # Playable games & sandboxes
-│   ├── toolsandbox.html           # 3D mesh builder
-│   ├── cosmic-tunnel.html         # Space visualization
-│   ├── cultivation_combat_game.html
-│   └── ...more games
-│
-├── 📂 prefab/              # Avatar & body construction
-│   ├── nexus_cad_core.html        # CAD-style body editor
-│   ├── creature-rig-sandbox.html  # Rigging tools
-│   ├── anatomy_assembler.html     # Body assembly
+├── nexus_swarm/
+│   └── nexus_trainer_loop.py   ← MAIN ENTRY POINT
+├── nucleus/
+│   ├── nova_omega.cpp          ← C++ cognitive core
+│   └── NexusHolyBeatSystem.hpp ← Audio pipeline
+├── docs/core/
+│   ├── NEXUS_AI_BLUEPRINT.md   ← Full specification
+│   ├── STARTUP_GUIDE.md        ← Quick start
+│   └── ARCHITECTURE.md         ← Technical deep-dive
+└── config/
+    └── nexus_config.json       ← System configuration
+```
+
+---
+
+## 🔌 Service Ports
+
+| Port | Service | Protocol |
+|------|---------|----------|
+| **8765** | Python Brain | WebSocket |
+| **8085** | C++ Tensor | WebSocket |
+| **8888** | HTTP Server | HTTP |
+| **8002** | ChromaDB | HTTP |
+
+---
+
+## 🌐 Dashboards
+
+| Dashboard | URL |
+|-----------|-----|
+| Analytics | http://localhost:8888/nexus_analytics_dashboard.html |
+| Resonance | http://localhost:8888/nexus_resonance_interface.html |
+| Scheduler | http://localhost:8888/nexus_scheduler.html |
+
+---
+
+## 📖 Additional Documentation
+
+### Access Dashboards
+
+| Dashboard | URL | Purpose |
+|-----------|-----|---------|
+| Analytics | http://localhost:8888/nexus_analytics_dashboard.html | Real-time metrics |
+| Resonance | http://localhost:8888/nexus_resonance_interface.html | Tensor visualization |
+| Viz | http://localhost:8888/nexus_viz_dashboard.html | System overview |
+| Studio | http://localhost:8888/studio/world-engine-studio.html | World editor |
+
+### Service Ports
+
+| Port | Service | Protocol |
+|------|---------|----------|
+| 8085 | Nexus WebSocket Server (C++) | WebSocket |
+| 8765 | Python Bridge | WebSocket |
+| 8888 | HTTP File Server | HTTP |
+| 8001 | Docker Sandbox | HTTP |
+| 8002 | ChromaDB (Vector Memory) | HTTP |
+| 3001 | Nucleus API | HTTP |
+
+---
+
+## 🧠 Nucleus Nexus AI
+
+The core C++ reasoning engine with real-time WebSocket communication.
+
+### Architecture
+```
+┌─────────────────────────────────────────────────────┐
+│              nexus_server.exe (Port 8085)           │
+├─────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+│  │ Holy Beat   │  │ Tensor Core │  │  WebSocket  │ │
+│  │   System    │  │   Memory    │  │   Handler   │ │
+│  └─────────────┘  └─────────────┘  └─────────────┘ │
+└─────────────────────────────────────────────────────┘
+```
+
+### Build & Run
+
+```powershell
+# Compile with MSVC
+cl /EHsc /std:c++17 /I"nucleus" /Fe:bin\nexus_server.exe nucleus\nexus_server.cpp
+
+# Run server
+.\bin\nexus_server.exe
+# Output: [NEXUS] Server initialized on port 8085
+```
+
+### WebSocket Messages
+
+```json
+// Request metrics
+{"type": "get_metrics"}
+
+// Response
+{
+  "type": "metrics",
+  "holy_beat": {"tempo": 120, "energy": 0.75, "pattern": "fibonacci"},
+  "tensor_core": {"dimensions": 4, "resonance": 0.92}
+}
+```
+
+---
+
+## 🐝 Genesis Swarm Mind
+
+A 9-agent autonomous AI swarm system for intelligent code generation and maintenance.
+
+### Agent Roster
+
+| Agent | Role | Specialty |
+|-------|------|-----------|
+| 🧹 **Janitor** | Code cleanup | Dead code removal, formatting |
+| 📚 **Archivist** | Documentation | Auto-generate docs, comments |
+| 📬 **Courier** | File operations | Create, move, sync files |
+| 🧬 **Evolutionist** | Code evolution | Refactoring, optimization |
+| 🔮 **Oracle** | Predictions | Bug detection, suggestions |
+| 🔍 **Inquisitor** | Analysis | Code review, quality checks |
+| 🎯 **Strategist** | Planning | Architecture decisions |
+| 🏗️ **Architect** | Structure | Component design, patterns |
+| 🎓 **Trainer** | Learning | Skill acquisition via TDD |
+
+### CLI Commands
+
+```powershell
+cd nexus_swarm
+
+# Start interactive swarm
+node nexus_swarm.js
+
+# Direct commands
+node nexus_swarm.js --review "path/to/file.js"
+node nexus_swarm.js --evolve "path/to/module/"
+node nexus_swarm.js --document "src/"
+node nexus_swarm.js --train "React hooks"
+node nexus_swarm.js --query "How does the tensor core work?"
+```
+
+### Trainer Agent (New!)
+
+The Trainer agent implements skill acquisition through TDD cycles:
+
+```javascript
+// Train a new skill
+await swarm.train("WebSocket authentication");
+
+// Output:
+// [TRAINER] Generating hypothesis for: WebSocket authentication
+// [TRAINER] Writing failing test...
+// [TRAINER] Implementing solution...
+// [TRAINER] Test passed! Skill acquired.
+// [TRAINER] Stored skill in ChromaDB vector memory
+```
+
+---
+
+## ⚡ Tensor Core Memory
+
+Mathematical resonance system using the Resonance Alphabet for symbolic computation.
+
+### Resonance Alphabet
+
+| Glyph | Symbol | Meaning | Frequency |
+|-------|--------|---------|-----------|
+| Α | Nexus | Connection point | 432 Hz |
+| Β | Flow | Energy pathway | 528 Hz |
+| Γ | Gate | Transition node | 639 Hz |
+| Δ | Delta | Change vector | 741 Hz |
+| Ω | Omega | Completion | 852 Hz |
+
+### Tensor Operations
+
+```cpp
+// In nucleus/NexusTensorCore.hpp
+TensorField field(4); // 4-dimensional tensor
+field.setResonance(0.92);
+field.applyGlyph(Glyph::NEXUS);
+auto result = field.collapse(); // Returns eigenvalue
+```
+
+### Memory Integration
+
+The Tensor Core connects to ChromaDB for persistent vector memory:
+
+```python
+# Query tensor memories
+import chromadb
+client = chromadb.HttpClient(host="localhost", port=8002)
+collection = client.get_collection("tensor_memories")
+results = collection.query(query_texts=["resonance pattern"], n_results=5)
+```
+
+---
+
+## 🎵 Holy Beat Sound System
+
+Audio-reactive synthesis engine with sacred geometry patterns.
+
+### Audio States
+
+| State | Description | BPM Range |
+|-------|-------------|-----------|
+| `calm` | Ambient, meditative | 60-80 |
+| `focused` | Work rhythm | 80-120 |
+| `energized` | High activity | 120-160 |
+| `transcendent` | Peak flow | 160+ |
+
+### Integration
+
+```javascript
+// Connect to Holy Beat via WebSocket
+const ws = new WebSocket('ws://localhost:8085');
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === 'audio_state') {
+    console.log(`Tempo: ${data.tempo}, Energy: ${data.energy}`);
+  }
+};
+
+// Request audio state
+ws.send(JSON.stringify({ type: 'get_audio_state' }));
+```
+
+### Demos
+
+- `bin/holy_beat_demo.exe` - Standalone audio demo
+- `nexus_sator_resonance.html` - Visual audio interface
+- `apps/demos/vibe_engine_nexus_demo.html` - Full vibe engine
+
+---
+
+## 📊 Analytics Dashboard
+
+Real-time monitoring dashboard with process tracking.
+
+### Features
+
+- **Process Monitoring**: CPU/Memory for all Nexus processes
+- **Holy Beat Metrics**: Live tempo, energy, pattern display
+- **Tensor Core Data**: Resonance levels, field dimensions
+- **Swarm Activity**: Agent status and task progress
+- **Docker Health**: Container status monitoring
+
+### Process Display
+
+```
+┌────────────────────────────────────────┐
+│ PROCESS MONITOR                        │
+├────────────────────────────────────────┤
+│ nexus_server.exe    CPU: 2.3%  MEM: 45MB
+│ python (bridge)     CPU: 1.1%  MEM: 82MB
+│ node (swarm)        CPU: 3.2%  MEM: 156MB
+│ chromadb            CPU: 0.8%  MEM: 234MB
+└────────────────────────────────────────┘
+```
+
+### Access
+
+```
+http://localhost:8888/nexus_analytics_dashboard.html
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Container Architecture
+
+```yaml
+services:
+  nexus_sandbox:       # Port 8001 - FastAPI sandbox
+  nexus_memory:        # Port 8002 - ChromaDB vector DB
+  nucleus-core:        # Core processing
+  nucleus-api:         # REST API gateway
+  nucleus-gateway:     # Load balancer
+```
+
+### Quick Deploy
+
+```powershell
+cd sandbox
+docker-compose up -d
+
+# Check status
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# View logs
+docker logs nexus_sandbox -f
+```
+
+### Health Check
+
+```powershell
+# Test ChromaDB
+curl http://localhost:8002/api/v1/heartbeat
+
+# Test Sandbox
+curl http://localhost:8001/health
+```
+
+---
 │   └── glb_exporter.html          # Model export
 │
 ├── 📂 nexus/               # Nexus ecosystem
@@ -154,6 +470,8 @@ Core world simulation classes in `src/nexus.ts`:
 - `apps/demos/vibe_engine_nexus_demo.html` - Audio engine
 - `nexus/audio_sacred_geometry.html` - Sacred geometry audio
 - `apps/demos/letter_note_demo.html` - Musical notation
+- `nexus_sator_resonance.html` - Holy Beat integration
+- `bin/holy_beat_demo.exe` - C++ audio demo
 
 ### Graphics & Rendering
 - `apps/demos/lighting_time_demo.html` - Lighting system
@@ -161,6 +479,8 @@ Core world simulation classes in `src/nexus.ts`:
 - `vfx/` - Visual effects
 
 ### Memory & AI
+- `nexus_swarm/` - 9-agent AI swarm
+- `nucleus/` - C++ core engine
 - `meta/thought-engine/` - AI reasoning system
 - `meta/tensor_room.html` - Tensor operations
 - `knowledge/` - Knowledge graph
@@ -172,27 +492,82 @@ Core world simulation classes in `src/nexus.ts`:
 
 ---
 
+## 🗂️ Key Files
+
+### C++ Nucleus Core
+```
+nucleus/
+├── nexus_server.cpp           # Main WebSocket server
+├── NexusWebSocketServer.hpp   # WebSocket implementation
+├── NexusHolyBeatSystem.hpp    # Audio synthesis
+├── NexusTensorCore.hpp        # Tensor mathematics
+├── NexusResonanceAlphabet.hpp # Symbolic glyphs
+└── nucleus.cpp                # Core processing
+```
+
+### Node.js Swarm
+```
+nexus_swarm/
+├── nexus_swarm.js    # 9-agent swarm (2662 lines)
+├── nexus_bridge.py   # Process monitoring bridge
+├── swarm.config.js   # Agent configuration
+└── skills/           # Acquired skill modules
+```
+
+### Dashboards
+```
+├── nexus_analytics_dashboard.html  # Real-time metrics
+├── nexus_viz_dashboard.html        # System visualization
+├── nexus_resonance_interface.html  # Tensor UI
+└── studio/                         # Development tools
+```
+
+---
+
 ## 🛠️ Development
 
 ### Prerequisites
-- Node.js 18+
-- Python 3.10+ (for backend)
-- npm or pnpm
+- **C++ Compiler**: MSVC 19.50+ (Visual Studio 2025+)
+- **Node.js**: 18+
+- **Python**: 3.10+ with psutil
+- **Docker**: For ChromaDB and sandbox
 
-### Backend Services
-```bash
-# Start Nexus WebSocket server
-python nexus/bus_server.py
+### Build C++ Components
 
-# Start World Engine API
-cd backend && uvicorn main:app --reload --port 8001
+```powershell
+# Compile nexus server
+cl /EHsc /std:c++17 /I"nucleus" /Fe:bin\nexus_server.exe nucleus\nexus_server.cpp
+
+# Compile Holy Beat demo
+cl /EHsc /std:c++17 /I"nucleus" /Fe:bin\holy_beat_demo.exe nucleus\holy_beat_demo.cpp
+
+# Compile Tensor demo
+cl /EHsc /std:c++17 /I"nucleus" /Fe:bin\tensor_demo.exe nucleus\tensor_demo.cpp
 ```
 
-### Frontend Development
-```bash
-npm run dev        # Vite dev server
-npm run build      # Production build
-npm run test       # Run tests
+### Install Python Dependencies
+
+```powershell
+pip install psutil chromadb websockets
+```
+
+### Start All Services
+
+```powershell
+# 1. Docker services
+cd sandbox && docker-compose up -d
+
+# 2. C++ WebSocket server (new terminal)
+.\bin\nexus_server.exe
+
+# 3. Python bridge (new terminal)
+cd nexus_swarm && python nexus_bridge.py
+
+# 4. HTTP server (new terminal)
+python -m http.server 8888
+
+# 5. Swarm (optional, new terminal)
+cd nexus_swarm && node nexus_swarm.js
 ```
 
 ---
@@ -202,18 +577,36 @@ npm run test       # Run tests
 | Document | Purpose |
 |----------|---------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture overview |
-| [docs/API.md](./docs/API.md) | API reference |
+| [ENGINE_BUILD_GUIDE.md](./ENGINE_BUILD_GUIDE.md) | C++ build instructions |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines |
-| [docs/QUICK_START.md](./docs/QUICK_START.md) | Getting started guide |
+| [docs/API.md](./docs/API.md) | API reference |
 
 ---
 
-## 🗄️ Archive
+## 🔧 Troubleshooting
 
-Historical documents are in `archive/` for reference:
-- `archive/phase-reports/` - Development phase documentation
-- `archive/integration-docs/` - Integration history
-- `archive/completion-reports/` - Milestone completions
+### Port Conflicts
+```powershell
+# Check what's using a port
+netstat -ano | findstr :8085
+
+# Kill process by PID
+taskkill /F /PID <pid>
+```
+
+### Docker Issues
+```powershell
+# Restart containers
+docker-compose down && docker-compose up -d
+
+# Check container logs
+docker logs nexus_sandbox -f
+```
+
+### WebSocket Connection Failed
+1. Verify `nexus_server.exe` is running
+2. Check port 8085 is not blocked by firewall
+3. Confirm browser allows WebSocket connections
 
 ---
 
@@ -229,4 +622,16 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-*Built with Three.js, React, TypeScript, FastAPI, and WebSockets*
+**Tech Stack:**
+- **C++17** - Core engine (MSVC)
+- **Node.js** - Swarm agents
+- **Python** - Bridge & backend
+- **Three.js** - 3D graphics
+- **React/TypeScript** - UI components
+- **WebSocket** - Real-time communication
+- **ChromaDB** - Vector memory
+- **Docker** - Container deployment
+
+---
+
+*Nexus AI Platform - Where mathematics meets consciousness*
