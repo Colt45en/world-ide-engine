@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:studio": "vite build --mode studio",
+    "build:all": "npm run build && npm run build:studio",
     "build:electron": "npm run build && electron-builder",
     "electron": "npm run build && electron .",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
@@ -19,7 +21,10 @@
     "test:watch": "vitest",
     "clean": "rm -rf dist build node_modules .turbo",
     "server": "tsx src/server.ts",
-    "dev:all": "concurrently npm run dev npm run server"
+    "dev:all": "concurrently npm run dev npm run server",
+    "feel:build": "cd nucleus/compiler/LMN/Resonance/feel && cmake -B build -S . && cmake --build build --config Release",
+    "feel:compile": "nucleus/compiler/LMN/Resonance/feel/feelc.exe",
+    "lmn:install": "cd lmn-lang && npm install && code --install-extension ."
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
