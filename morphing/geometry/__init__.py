@@ -15,7 +15,7 @@ from morphing.geometry.target import (
 
 __all__ = [
     "AnalyticSurface",
-    "MeshTarget", 
+    "MeshTarget",
     "SurfaceMetric",
     "sample_surface_on_grid"
 ]
